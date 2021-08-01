@@ -1,4 +1,4 @@
-package com.example.callbackbot.dto;
+package com.example.callbackbot.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,7 +12,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CallbackEventDto {
+public class CallbackEvent {
     private EventType type;
     private Map<String, Object> object;
     @JsonProperty(value = "group_id")
@@ -23,7 +23,6 @@ public class CallbackEventDto {
 
     public enum EventType {
         message_new,
-        message_event,
         message_reply,
         confirmation
     }

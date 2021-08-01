@@ -1,6 +1,6 @@
 package com.example.callbackbot.kafka;
 
-import com.example.callbackbot.dto.CallbackMessageSendDto;
+import com.example.callbackbot.model.CallbackMessage;
 import com.example.callbackbot.model.Group;
 import com.example.callbackbot.model.Message;
 import com.example.callbackbot.service.CallbackService;
@@ -22,14 +22,15 @@ public class KafkaConsumer {
     @KafkaListener(topics = "response", groupId = "group_id", containerFactory = "kafkaListener")
     public void consume(Message message) {
         Group group = groupService.findByGroupId(message.getGroupId());
-        CallbackMessageSendDto callbackMessageSendDto = CallbackMessageSendDto.builder()
+        CallbackMessage callbackMessage = CallbackMessage.builder()
                 .peerId(message.getClientId())
                 .message(message.getText())
                 .groupId(message.getGroupId())
                 .token(group.getToken())
                 .version(group.getVersion())
                 .randomId((long) message.hashCode())
+                .keyboard(message.getKeyboard())
                 .build();
-        callbackService.sendCallbackMessage(callbackMessageSendDto);
+        callbackService.sendCallbackMessage(callbackMessage);
     }
 }

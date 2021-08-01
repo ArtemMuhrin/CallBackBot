@@ -1,4 +1,4 @@
-package com.example.callbackbot.dto;
+package com.example.callbackbot.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CallbackResponseDto {
+public class CallbackResponse {
     @JsonProperty(value = "peer_id")
     Long peerId;
     @JsonProperty(value = "message_id")

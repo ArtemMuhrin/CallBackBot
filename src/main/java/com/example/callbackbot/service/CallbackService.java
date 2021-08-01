@@ -1,10 +1,11 @@
 package com.example.callbackbot.service;
 
+import com.example.callbackbot.model.CallbackEvent;
+import com.example.callbackbot.model.CallbackMessage;
+import com.example.callbackbot.model.CallbackResponse;
 import com.example.callbackbot.util.CallbackEventProcessor;
 import com.example.callbackbot.util.CallbackEventProcessorFactory;
-import com.example.callbackbot.dto.CallbackEventDto;
-import com.example.callbackbot.dto.CallbackMessageSendDto;
-import com.example.callbackbot.dto.CallbackResponseDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,26 +37,29 @@ public class CallbackService {
         this.callbackEventProcessorFactory = callbackEventProcessorFactory;
     }
 
-    public String processCallbackEvent(CallbackEventDto callbackEventDto) {
-        CallbackEventProcessor callbackEventProcessor = callbackEventProcessorFactory.getEventProcessor(callbackEventDto.getType());
-        return callbackEventProcessor.process(callbackEventDto);
+    public String processCallbackEvent(CallbackEvent callbackEvent) {
+        CallbackEventProcessor callbackEventProcessor = callbackEventProcessorFactory.getEventProcessor(callbackEvent.getType());
+        return callbackEventProcessor.process(callbackEvent);
     }
 
-    public void sendCallbackMessage(CallbackMessageSendDto messageDto) {
-        URI uri = createUri(messageDto);
-        ResponseEntity<CallbackResponseDto> responseEntity = restTemplate.postForEntity(uri, null, CallbackResponseDto.class);
-
-        if (responseEntity.getBody().getError() != null) {
-            logger.warn(responseEntity.getBody().getError().getErrorMsg());
+    public void sendCallbackMessage(CallbackMessage callbackMessage) {
+        try {
+            URI uri = createUri(callbackMessage);
+            ResponseEntity<CallbackResponse> responseEntity = restTemplate.postForEntity(uri, null, CallbackResponse.class);
+            if (responseEntity.getBody().getError() != null) {
+                logger.warn(responseEntity.getBody().getError().getErrorMsg());
+            }
+        } catch (JsonProcessingException e) {
+            logger.warn(e.getMessage());
         }
     }
 
-    private URI createUri(CallbackMessageSendDto messageDto) {
-        MultiValueMap<String, String> map = objectMapper.convertValue(messageDto, LinkedMultiValueMap.class);
-        return UriComponentsBuilder
-                .fromHttpUrl(sendUrl)
-                .queryParams(map)
-                .build()
-                .toUri();
+    private URI createUri(CallbackMessage callbackMessage) throws JsonProcessingException {
+        MultiValueMap<String, String> map = objectMapper.convertValue(callbackMessage, LinkedMultiValueMap.class);
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(sendUrl).queryParams(map);
+        if (!(callbackMessage.getKeyboard() == null)) {
+            uriComponentsBuilder.queryParam("keyboard", objectMapper.writeValueAsString(callbackMessage.getKeyboard()));
+        }
+        return uriComponentsBuilder.build().toUri();
     }
 }

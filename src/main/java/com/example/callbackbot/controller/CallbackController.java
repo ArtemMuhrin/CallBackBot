@@ -1,6 +1,6 @@
 package com.example.callbackbot.controller;
 
-import com.example.callbackbot.dto.CallbackEventDto;
+import com.example.callbackbot.model.CallbackEvent;
 import com.example.callbackbot.service.CallbackService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +19,8 @@ public class CallbackController {
 
     @PostMapping()
     @ResponseBody
-    public ResponseEntity<String> processCallback(@RequestBody CallbackEventDto callbackEventDto) {
-        return ResponseEntity.ok(callbackService.processCallbackEvent(callbackEventDto));
+    public ResponseEntity<String> processCallback(@RequestBody CallbackEvent callbackEvent) {
+        return ResponseEntity.ok(callbackService.processCallbackEvent(callbackEvent));
     }
+
 }

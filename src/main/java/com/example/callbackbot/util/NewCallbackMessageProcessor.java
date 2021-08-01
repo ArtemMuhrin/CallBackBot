@@ -1,6 +1,6 @@
 package com.example.callbackbot.util;
 
-import com.example.callbackbot.dto.CallbackEventDto;
+import com.example.callbackbot.model.CallbackEvent;
 import com.example.callbackbot.kafka.KafkaProducer;
 import com.example.callbackbot.model.Group;
 import com.example.callbackbot.model.Message;
@@ -24,24 +24,24 @@ public class NewCallbackMessageProcessor implements CallbackEventProcessor {
     }
 
     @Override
-    public String process(CallbackEventDto callbackEventDto) {
-        Group group = groupService.findByGroupId(callbackEventDto.getGroupId());
+    public String process(CallbackEvent callbackEvent) {
+        Group group = groupService.findByGroupId(callbackEvent.getGroupId());
         if (group == null) {
             logger.warn("group not found");
         } else if (!group.getActive()) {
             logger.warn("bot is not active");
         } else {
-            Message message = parseCallbackMessage(callbackEventDto);
+            Message message = parseCallbackMessage(callbackEvent);
             kafkaProducer.send(message);
         }
         return "OK";
     }
 
-    private Message parseCallbackMessage(CallbackEventDto callbackEventDto) {
-        Map<String, Object> callbackMessage = (Map<String, Object>) callbackEventDto.getObject().get("message");
+    private Message parseCallbackMessage(CallbackEvent callbackEvent) {
+        Map<String, Object> callbackMessage = (Map<String, Object>) callbackEvent.getObject().get("message");
         Message message = Message.builder()
                 .clientId(Long.parseLong(String.valueOf(callbackMessage.get("peer_id"))))
-                .groupId(callbackEventDto.getGroupId())
+                .groupId(callbackEvent.getGroupId())
                 .text(String.valueOf(callbackMessage.get("text")))
                 .build();
         return message;

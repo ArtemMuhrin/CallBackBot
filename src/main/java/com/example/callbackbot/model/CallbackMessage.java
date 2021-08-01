@@ -1,4 +1,4 @@
-package com.example.callbackbot.dto;
+package com.example.callbackbot.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -7,9 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 
 @Builder
@@ -17,7 +15,7 @@ import java.util.Map;
 @Setter
 @JsonPropertyOrder(alphabetic = true)
 @EqualsAndHashCode(exclude = "randomId")
-public class CallbackMessageSendDto implements Serializable {
+public class CallbackMessage {
     @JsonProperty(value = "user_id")
     Long userId;
     @JsonProperty(value = "random_id")
@@ -42,7 +40,7 @@ public class CallbackMessageSendDto implements Serializable {
     Long stickerId;
     @JsonProperty(value = "group_id")
     Long groupId;
-    Map<String, String> keyboard;
+    Keyboard keyboard;
     Long payload;
     @JsonProperty(value = "dont_parse_links")
     Integer dontParseLinks;

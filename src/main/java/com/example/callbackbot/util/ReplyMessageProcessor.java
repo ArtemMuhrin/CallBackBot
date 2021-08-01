@@ -1,12 +1,12 @@
 package com.example.callbackbot.util;
 
-import com.example.callbackbot.dto.CallbackEventDto;
+import com.example.callbackbot.model.CallbackEvent;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ReplyMessageProcessor implements CallbackEventProcessor{
+public class ReplyMessageProcessor implements CallbackEventProcessor {
     @Override
-    public String process(CallbackEventDto callbackEventDto) {
+    public String process(CallbackEvent callbackEvent) {
         return "OK";
     }
 }

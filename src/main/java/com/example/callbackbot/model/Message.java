@@ -15,4 +15,5 @@ public class Message {
     private Long groupId;
     private Long clientId;
     private String text;
+    private Keyboard keyboard;
 }

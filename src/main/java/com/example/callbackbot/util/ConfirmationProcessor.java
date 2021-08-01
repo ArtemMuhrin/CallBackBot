@@ -1,6 +1,6 @@
 package com.example.callbackbot.util;
 
-import com.example.callbackbot.dto.CallbackEventDto;
+import com.example.callbackbot.model.CallbackEvent;
 import com.example.callbackbot.model.Group;
 import com.example.callbackbot.repository.GroupRepository;
 import org.slf4j.Logger;
@@ -18,9 +18,9 @@ public class ConfirmationProcessor implements CallbackEventProcessor {
     }
 
     @Override
-    public String process(CallbackEventDto callbackEventDto) {
+    public String process(CallbackEvent callbackEvent) {
         String confirmation = "";
-        Group group = groupService.findByGroupId(callbackEventDto.getGroupId());
+        Group group = groupService.findByGroupId(callbackEvent.getGroupId());
         if (group == null) {
             logger.warn("group not found");
         } else {

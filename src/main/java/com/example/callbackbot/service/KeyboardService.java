@@ -15,7 +15,7 @@ public class KeyboardService {
     private final CircuitBreakerFactory circuitBreakerFactory;
 
     @Value("${keyboard.server.host}/keyboard/key")
-    String getKeyboardUrl;
+    String getKeyUrl;
 
     public KeyboardService(RestTemplate restTemplate, @Lazy CallbackService callbackService, CircuitBreakerFactory circuitBreakerFactory) {
         this.restTemplate = restTemplate;
@@ -24,11 +24,12 @@ public class KeyboardService {
     }
 
     public void handleButtonClick(Message message) {
-        message.setText(sendRequest(message.getText()));
-        callbackService.sendCallbackMessage(callbackService.buildCallbackMessage(message));
+        Message response = sendRequest(message);
+        callbackService.sendCallbackMessage(callbackService.buildCallbackMessage(response));
     }
 
-    private String sendRequest(String value) {
-        return circuitBreakerFactory.create("circuitbreaker").run(() -> restTemplate.postForEntity(getKeyboardUrl, value, String.class).getBody(), throwable -> "мне плохо");
+    private Message sendRequest(Message message) {
+        return circuitBreakerFactory.create("circuitbreaker").run(() -> restTemplate.getForEntity(getKeyUrl, Message.class, message).getBody());
+        //  return circuitBreakerFactory.create("circuitbreaker").run(() -> restTemplate.postForEntity(getKeyboardUrl, message, Message.class).getBody(), throwable -> "мне плохо");
     }
 }

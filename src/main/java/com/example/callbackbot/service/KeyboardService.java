@@ -43,6 +43,6 @@ public class KeyboardService {
     }
 
     private String sendRequest(String value) {
-        return circuitBreakerFactory.create("circuitbreaker").run(() -> restTemplate.postForEntity(getKeyboardUrl, value, String.class).getBody());
+        return circuitBreakerFactory.create("circuitbreaker").run(() -> restTemplate.postForEntity(getKeyboardUrl, value, String.class).getBody(), throwable -> "мне плохо");
     }
 }

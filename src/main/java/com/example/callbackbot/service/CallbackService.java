@@ -3,6 +3,8 @@ package com.example.callbackbot.service;
 import com.example.callbackbot.model.CallbackEvent;
 import com.example.callbackbot.model.CallbackMessage;
 import com.example.callbackbot.model.CallbackResponse;
+import com.example.callbackbot.model.Group;
+import com.example.callbackbot.model.Message;
 import com.example.callbackbot.util.CallbackEventProcessor;
 import com.example.callbackbot.util.CallbackEventProcessorFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,14 +28,16 @@ public class CallbackService {
     private static final Logger logger = LoggerFactory.getLogger(CallbackService.class);
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
+    private final GroupService groupService;
     private final CallbackEventProcessorFactory callbackEventProcessorFactory;
 
     @Value("https://api.vk.com/method/messages.send")
     private String sendUrl;
 
-    public CallbackService(ObjectMapper objectMapper, RestTemplate restTemplate, CallbackEventProcessorFactory callbackEventProcessorFactory) {
+    public CallbackService(ObjectMapper objectMapper, RestTemplate restTemplate, GroupService groupService, CallbackEventProcessorFactory callbackEventProcessorFactory) {
         this.objectMapper = objectMapper;
         this.restTemplate = restTemplate;
+        this.groupService = groupService;
         this.callbackEventProcessorFactory = callbackEventProcessorFactory;
     }
 
@@ -52,6 +56,19 @@ public class CallbackService {
         } catch (JsonProcessingException e) {
             logger.warn(e.getMessage());
         }
+    }
+
+    public CallbackMessage buildCallbackMessage(Message message) {
+        Group group = groupService.findByGroupId(message.getGroupId());
+        return CallbackMessage.builder()
+                .peerId(message.getClientId())
+                .message(message.getText())
+                .groupId(message.getGroupId())
+                .token(group.getToken())
+                .version(group.getVersion())
+                .randomId((long) message.hashCode())
+                .keyboard(message.getKeyboard())
+                .build();
     }
 
     private URI createUri(CallbackMessage callbackMessage) throws JsonProcessingException {

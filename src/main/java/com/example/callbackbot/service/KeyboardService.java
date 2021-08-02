@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
+
 @Service
 public class KeyboardService {
 
@@ -29,7 +31,6 @@ public class KeyboardService {
     }
 
     private Message sendRequest(Message message) {
-        return circuitBreakerFactory.create("circuitbreaker").run(() -> restTemplate.getForEntity(getKeyUrl, Message.class, message).getBody());
-        //  return circuitBreakerFactory.create("circuitbreaker").run(() -> restTemplate.postForEntity(getKeyboardUrl, message, Message.class).getBody(), throwable -> "мне плохо");
+        return circuitBreakerFactory.create("circuitbreaker").run(() -> restTemplate.postForObject(getKeyUrl, message, Message.class));
     }
 }

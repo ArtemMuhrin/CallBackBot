@@ -22,5 +22,4 @@ public class CallbackController {
     public ResponseEntity<String> processCallback(@RequestBody CallbackEvent callbackEvent) {
         return ResponseEntity.ok(callbackService.processCallbackEvent(callbackEvent));
     }
-
 }

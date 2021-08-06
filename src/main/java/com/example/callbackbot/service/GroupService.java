@@ -13,14 +13,16 @@ public class GroupService {
         this.groupRepository = groupRepository;
     }
 
-    public void saveGroup(Group group) {
+    public Group saveGroup(Group group) {
+        Group newGroup = null;
         Group currentGroup = findByGroupId(group.getGroupId());
         if (currentGroup == null) {
-            groupRepository.save(group);
+            newGroup = groupRepository.save(group);
         } else if (!currentGroup.getActive()) {
             currentGroup.setActive(true);
-            groupRepository.save(currentGroup);
+            newGroup = groupRepository.save(currentGroup);
         }
+        return newGroup;
     }
 
     public Group findByGroupId(Long groupId) {

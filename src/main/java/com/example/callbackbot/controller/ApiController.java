@@ -24,9 +24,12 @@ public class ApiController {
                                        @RequestParam String token,
                                        @RequestParam String confirmation,
                                        @RequestParam Double version) {
-        Group group = new Group(groupId, token,confirmation, version, true);
-        groupService.saveGroup(group);
-        return ResponseEntity.ok("Group has been added. Bot started working.");
+        Group group = new Group(groupId, token, confirmation, version, true);
+        if (!(groupService.saveGroup(group) == null)) {
+            return ResponseEntity.ok("Group has been added. Bot started working.");
+        } else {
+            return ResponseEntity.badRequest().body("Failed to create bot. Please try later");
+        }
     }
 
     @DeleteMapping("/group")

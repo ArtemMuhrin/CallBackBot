@@ -5,6 +5,7 @@ import com.example.callbackbot.kafka.KafkaProducer;
 import com.example.callbackbot.model.Group;
 import com.example.callbackbot.model.Message;
 import com.example.callbackbot.repository.GroupRepository;
+import com.example.callbackbot.service.CallbackSender;
 import com.example.callbackbot.service.KeyboardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +20,13 @@ public class NewCallbackMessageProcessor implements CallbackEventProcessor {
     private final KafkaProducer kafkaProducer;
     private final GroupRepository groupService;
     private final KeyboardService keyboardService;
+    private final CallbackSender callbackSender;
 
-    public NewCallbackMessageProcessor(KafkaProducer kafkaProducer, GroupRepository groupService, KeyboardService keyboardService) {
+    public NewCallbackMessageProcessor(KafkaProducer kafkaProducer, GroupRepository groupService, KeyboardService keyboardService, CallbackSender callbackSender) {
         this.kafkaProducer = kafkaProducer;
         this.groupService = groupService;
         this.keyboardService = keyboardService;
+        this.callbackSender = callbackSender;
     }
 
     @Override
@@ -41,7 +44,8 @@ public class NewCallbackMessageProcessor implements CallbackEventProcessor {
                     .text(String.valueOf(map.get("text")))
                     .build();
             if(map.containsKey("payload")) {
-                keyboardService.handleButtonClick(message);
+                Message response = keyboardService.handleButtonClick(message);
+                callbackSender.sendMessage(response);
             } else {
                 kafkaProducer.send(message);
             }

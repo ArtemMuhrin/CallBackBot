@@ -1,5 +1,6 @@
 package com.example.callbackbot.service;
 
+import com.example.callbackbot.aspect.LogMethodCallCount;
 import com.example.callbackbot.model.CallbackMessage;
 import com.example.callbackbot.model.CallbackResponse;
 import com.example.callbackbot.model.Group;
@@ -35,6 +36,7 @@ public class CallbackSender {
         this.groupService = groupService;
     }
 
+    @LogMethodCallCount
     public void sendMessage(Message message) {
         CallbackMessage callbackMessage = buildCallbackMessage(message);
         try {
@@ -48,6 +50,7 @@ public class CallbackSender {
         }
     }
 
+    @LogMethodCallCount
     private CallbackMessage buildCallbackMessage(Message message) {
         Group group = groupService.findByGroupId(message.getGroupId());
         return CallbackMessage.builder()
@@ -61,6 +64,7 @@ public class CallbackSender {
                 .build();
     }
 
+    @LogMethodCallCount
     private URI createUri(CallbackMessage callbackMessage) throws JsonProcessingException {
         MultiValueMap<String, String> map = objectMapper.convertValue(callbackMessage, LinkedMultiValueMap.class);
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(sendUrl).queryParams(map);

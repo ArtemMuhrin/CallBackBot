@@ -1,5 +1,6 @@
 package com.example.callbackbot.controller;
 
+import com.example.callbackbot.aspect.LogMethodCallCount;
 import com.example.callbackbot.model.Group;
 import com.example.callbackbot.service.GroupService;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ public class ApiController {
         this.groupService = groupService;
     }
 
+    @LogMethodCallCount
     @PostMapping("/group")
     public ResponseEntity<?> saveGroup(@RequestParam Long groupId,
                                        @RequestParam String token,
@@ -32,6 +34,7 @@ public class ApiController {
         }
     }
 
+    @LogMethodCallCount
     @DeleteMapping("/group")
     public ResponseEntity<?> deleteGroup(@RequestParam Long groupId, @RequestParam String token) {
         Group group = groupService.findByGroupId(groupId);

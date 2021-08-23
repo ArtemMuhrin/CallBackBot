@@ -1,5 +1,6 @@
 package com.example.callbackbot.util;
 
+import com.example.callbackbot.aspect.LogMethodCallCount;
 import com.example.callbackbot.model.CallbackEvent;
 import com.example.callbackbot.kafka.KafkaProducer;
 import com.example.callbackbot.model.Group;
@@ -29,6 +30,7 @@ public class NewCallbackMessageProcessor implements CallbackEventProcessor {
         this.callbackSender = callbackSender;
     }
 
+    @LogMethodCallCount
     @Override
     public String process(CallbackEvent callbackEvent) {
         Group group = groupService.findByGroupId(callbackEvent.getGroupId());

@@ -1,5 +1,6 @@
 package com.example.callbackbot.service;
 
+import com.example.callbackbot.aspect.LogMethodCallCount;
 import com.example.callbackbot.model.CallbackEvent;
 import com.example.callbackbot.util.CallbackEventProcessor;
 import com.example.callbackbot.util.CallbackEventProcessorFactory;
@@ -18,6 +19,7 @@ public class CallbackService {
         this.callbackEventProcessorFactory = callbackEventProcessorFactory;
     }
 
+    @LogMethodCallCount
     public String processCallbackEvent(CallbackEvent callbackEvent) {
         CallbackEventProcessor callbackEventProcessor = callbackEventProcessorFactory.getEventProcessor(callbackEvent.getType());
         if (callbackEventProcessor == null) {

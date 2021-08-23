@@ -1,5 +1,6 @@
 package com.example.callbackbot.service;
 
+import com.example.callbackbot.aspect.LogMethodCallCount;
 import com.example.callbackbot.model.Message;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
@@ -20,6 +21,7 @@ public class KeyboardService {
         this.circuitBreakerFactory = circuitBreakerFactory;
     }
 
+    @LogMethodCallCount
     public Message handleButtonClick(Message message) {
         return circuitBreakerFactory.create("circuitbreaker").run(() -> restTemplate.postForObject(getKeyUrl, message, Message.class));
     }
